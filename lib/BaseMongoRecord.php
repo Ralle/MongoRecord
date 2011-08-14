@@ -78,13 +78,7 @@ abstract class BaseMongoRecord
 
 		$documents->timeout($className::$findTimeout);	
 	
-		while ($documents->hasNext())
-		{
-			$document = $documents->getNext();
-			$ret[] = self::instantiate($document);
-		}
-		
-		return $ret;
+		return $documents;
 	}
 
 	public static function findOne($query = array(), $options = array())
