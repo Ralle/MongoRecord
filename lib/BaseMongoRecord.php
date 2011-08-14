@@ -1,6 +1,7 @@
 <?php
 
 require_once('MongoRecord.php');
+require_once('MongoRecordIterator.php');
 require_once('Inflector.php');
 
 abstract class BaseMongoRecord
@@ -77,8 +78,8 @@ abstract class BaseMongoRecord
 		$ret = array();
 
 		$documents->timeout($className::$findTimeout);	
-	
-		return $documents;
+	  
+		return new MongoRecordIterator($documents, get_called_class());
 	}
 
 	public static function findOne($query = array(), $options = array())
@@ -87,7 +88,8 @@ abstract class BaseMongoRecord
 
 		$results = self::find($query, $options);
 		$className = get_called_class();
-		$one = $results->getNext();
+		$results->next();
+		$one = $results->current();
 		
 		if ($one)
 			return new $className($one, false);
