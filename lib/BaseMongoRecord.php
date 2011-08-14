@@ -86,9 +86,11 @@ abstract class BaseMongoRecord
 		$options['limit'] = 1;
 
 		$results = self::find($query, $options);
+		$className = get_called_class();
+		$one = $results->getNext();
 		
-		if ($results)
-			return current($results);
+		if ($one)
+			return new $className($one, false);
 		else
 			return null;
 	}
