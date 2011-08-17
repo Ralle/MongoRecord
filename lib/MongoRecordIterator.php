@@ -15,8 +15,12 @@ class MongoRecordIterator implements Iterator
   {
     $className = $this->className;
     $data = $this->cursor->current();
-    $ele = new $className($data, false);
-    return $ele;
+    if ($data)
+    {
+      return new $className($data, false);
+    }
+    
+    return null;
   }
   
   public function key()

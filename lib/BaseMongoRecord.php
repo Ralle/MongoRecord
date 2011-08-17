@@ -79,7 +79,7 @@ abstract class BaseMongoRecord
 
 		$documents->timeout($className::$findTimeout);	
 	  
-		return new MongoRecordIterator($documents, get_called_class());
+		return new MongoRecordIterator($documents, $className);
 	}
 
 	public static function findOne($query = array(), $options = array())
@@ -92,7 +92,7 @@ abstract class BaseMongoRecord
 		$one = $results->current();
 		
 		if ($one)
-			return new $className($one, false);
+			return $one;
 		else
 			return null;
 	}
@@ -139,13 +139,12 @@ abstract class BaseMongoRecord
 		// What is the get/set class attribute
 		$inflector = Inflector::getInstance();
 		$property = $inflector->underscore(substr($method, 3));
-
+    
 		if (empty($prefix) || empty($property))
 		{
 			// Did not match a get/set call
 			throw New Exception("Calling a non get/set method that does not exist: $method");
 		}
-
 		// Get
 		if ($prefix == "get" && array_key_exists($property, $this->attributes))
 		{
