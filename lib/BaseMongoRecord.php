@@ -39,7 +39,7 @@ abstract class BaseMongoRecord
 		if (!$this->validate())
 		{
 		  return false;
-		
+		}
 		$this->beforeSave();
 
 		$collection = self::getCollection();
