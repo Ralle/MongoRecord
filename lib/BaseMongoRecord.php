@@ -13,7 +13,6 @@ abstract class BaseMongoRecord
 
 	public static $database = null;
 	public static $connection = null;
-	public static $findTimeout = 20000;
 
 	public function __construct($attributes = array(), $new = true)
 	{
@@ -22,7 +21,9 @@ abstract class BaseMongoRecord
 		$this->errors = array();
 
 		if ($new)
-			$this->afterNew();
+		{
+		  $this->afterNew();
+		}
 	}
 
 	public function validate()
@@ -36,8 +37,9 @@ abstract class BaseMongoRecord
 	public function save()
 	{
 		if (!$this->validate())
-			return false;
-
+		{
+		  return false;
+		
 		$this->beforeSave();
 
 		$collection = self::getCollection();
@@ -104,8 +106,10 @@ abstract class BaseMongoRecord
 		$prefix = strtolower(substr($method, 0, 3));
 
 		if ($prefix != 'get' && $prefix != 'set')
+		{
 			return;
-
+		}
+		
 		// What is the get/set class attribute
 		$inflector = Inflector::getInstance();
 		$property = $inflector->underscore(substr($method, 3));
@@ -175,23 +179,23 @@ abstract class BaseMongoRecord
 		$collection_name = $inflector->tableize($className);
 
 		if ($className::$database == null)
-			throw new Exception("BaseMongoRecord::database must be initialized to a proper database string");
+		{
+		  throw new Exception("BaseMongoRecord::database must be initialized to a proper database string");
+		}
 
 		if ($className::$connection == null)
-			throw new Exception("BaseMongoRecord::connection must be initialized to a valid Mongo object");
+		{
+		  throw new Exception("BaseMongoRecord::connection must be initialized to a valid Mongo object");
+		}
 		
 		if (!($className::$connection->connected))
-			$className::$connection->connect();
+		{
+		  $className::$connection->connect();
+		}
 
 		return $className::$connection->selectCollection($className::$database, $collection_name);
 	}
-
-	public static function setFindTimeout($timeout)
-	{
-		$className = get_called_class();
-		$className::$findTimeout = $timeout;
-	}
-	
+  
 	public static function ensureIndex(array $keys, array $options = array())
 	{
 	  return self::getCollection()->ensureIndex($keys, $options);
