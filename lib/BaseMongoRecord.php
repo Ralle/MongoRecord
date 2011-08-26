@@ -60,62 +60,32 @@ abstract class BaseMongoRecord
 		}
 	}
 
-	public static function find($query = array(), $options = array())
+	public static function find(array $query = array())
 	{
 		$collection = self::getCollection();
 		$documents = $collection->find($query);
 		$className = get_called_class();
-
-		if (isset($options['sort']))
-			$documents->sort($options['sort']);
-		
-		if (isset($options['offset']))
-			$documents->skip($options['offset']);
-
-		if (isset($options['limit']))
-			$documents->limit($options['limit']);
-
-		$ret = array();
-
-		$documents->timeout($className::$findTimeout);	
-	  
 		return new MongoRecordIterator($documents, $className);
 	}
 
-	public static function findOne($query = array(), $options = array())
+	public static function findOne(array $query = array())
 	{
-		$options['limit'] = 1;
-
-		$results = self::find($query, $options);
+		$collection = self::getCollection();
+		$document = $collection->findOne($query);
 		$className = get_called_class();
-		$results->next();
-		$one = $results->current();
-		
-		if ($one)
-			return $one;
-		else
-			return null;
+		if ($document)
+		{
+		  return new $className($document);
+		}
+		return null;
 	}
 
-	public static function count($query = array())
+	public static function count(array $query = array())
 	{
 		$collection = self::getCollection();
 		$documents = $collection->count($query);
 
 		return $documents;
-	}
-
-	private static function instantiate($document)
-	{
-		if ($document)
-		{
-			$className = get_called_class();
-			return new $className($document, false);
-		}
-		else
-		{
-			return null;
-		}
 	}
 
 	public function getID()

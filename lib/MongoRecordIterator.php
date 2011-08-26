@@ -19,8 +19,15 @@ class MongoRecordIterator implements Iterator
     {
       return new $className($data, false);
     }
-    
     return null;
+  }
+  
+  // allows for skip() limit() and the like
+  // it would be able to replace key() next(), but those are required for this
+  // to be an iterator.
+  public function __call($name, array $arguments = array())
+  {
+    return call_user_func_array(array($this->cursor, $name), $arguments);
   }
   
   public function key()
